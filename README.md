@@ -10,7 +10,7 @@ by adding `periscope` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:periscope, "~> 0.1.0"}
+    {:periscope, "~> 0.1.1"}
   ]
 end
 ```
