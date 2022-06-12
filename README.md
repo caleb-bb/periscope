@@ -1,6 +1,6 @@
 # Periscope
 
-**TODO: Add description**
+Tools for analyzing running liveview processes.
 
 ## Installation
 
