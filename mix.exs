@@ -4,10 +4,12 @@ defmodule Periscope.MixProject do
   def project do
     [
       app: :periscope,
-      version: "0.1.0",
+      version: "0.1.1",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      package: package,
+      description: description
     ]
   end
 
@@ -38,9 +40,9 @@ defp package do
   [
    files: ["lib", "mix.exs", "README.md"],
    maintainers: ["C. Beers"],
-   licenses: ["Apache 2.0"],
+   licenses: ["Apache-2.0"],
    links: %{"GitHub" => "https://github.com/caleb-bb/periscope",
-            "Docs" => ""}
+            "Docs" => "https://hexdocs.pm/periscope"}
    ]
 end
 end

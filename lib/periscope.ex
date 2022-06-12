@@ -1,4 +1,4 @@
-defmodule ClarusWeb.Helpers.Periscope do
+defmodule Periscope do
   @moduledoc """
   Tools for dealing with liveview processes, components, sockets, assigns. Pulls this information directly from the list of BEAM processes.
   """
