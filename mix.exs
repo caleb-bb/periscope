@@ -27,4 +27,20 @@ defmodule Periscope.MixProject do
       {:earmark, "~> 0.1", only: :dev}
     ]
   end
+
+  defp description do
+  """
+  Tools for analyzing liveviews. Displays the currently-loaded liveview, the socket, the assigns, etc.
+  """
+end
+
+defp package do
+  [
+   files: ["lib", "mix.exs", "README.md"],
+   maintainers: ["C. Beers"],
+   licenses: ["Apache 2.0"],
+   links: %{"GitHub" => "https://github.com/caleb-bb/periscope",
+            "Docs" => ""}
+   ]
+end
 end
