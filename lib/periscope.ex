@@ -89,12 +89,13 @@ defmodule Periscope do
     |> hd()
     |> String.split("_")
     |> hd()
+    |> String.capitalize()
   end
 
   def paths_and_liveviews do
     module = web_module()
 
-    Module.concat([module, "Router"])
+    Module.concat([module, "Web.Router"])
     |> paths_and_liveviews()
 
     # then(&(&1.__routes__()))
