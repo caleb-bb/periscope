@@ -6,7 +6,6 @@ defmodule Periscope do
   @doc ~S"""
   liveview_pids returns the PID of every process running a liveview.
   """
-  @spec
   def liveview_pids do
     Process.list()
     |> Enum.map(
@@ -77,7 +76,7 @@ defmodule Periscope do
   def paths_and_liveviews(your_app_web) do
     your_app_web.__routes__()
     |> Enum.filter(&(&1.metadata |> Map.has_key?(:phoenix_live_view)))
-    |> Enum.map(&{&1.path, &1.metadata_phoenix_live_view |> elem(0)})
+    |> Enum.map(&{&1.path, &1.metadata.phoenix_live_view |> elem(0)})
   end
 
   def web_module do

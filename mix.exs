@@ -4,7 +4,7 @@ defmodule Periscope.MixProject do
   def project do
     [
       app: :periscope,
-      version: "0.2.2",
+      version: "0.2.3",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
