@@ -93,9 +93,9 @@ defmodule Periscope do
   end
 
   def paths_and_liveviews do
-    module = web_module()
+    module = web_module() <> "Web"
 
-    Module.concat([module, "Web.Router"])
+    Module.concat([module, "Router"])
     |> paths_and_liveviews()
 
     # then(&(&1.__routes__()))
