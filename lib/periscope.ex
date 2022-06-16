@@ -6,6 +6,7 @@ defmodule Periscope do
   @doc ~S"""
   liveview_pids returns the PID of every process running a liveview.
   """
+  @spec
   def liveview_pids do
     Process.list()
     |> Enum.map(
@@ -62,20 +63,55 @@ defmodule Periscope do
   end
 
   @doc ~S"""
-    Returns a list of active components. These are component instances, not modules. So if you have e.g. a row component that renders once for each row in a table, expect to see many copies of it here (one for each row).
+    Returns a list of active comoponent names. These are module names, so you only see one per module. Even if one component is rendered many times, you will only see its name once. If you want to see how many instances of a component are rendered. use components/0.
   """
-  def components do
+  def component_names do
     Enum.flat_map(
       component_states(),
       &(&1.components |> elem(1))
     )
-  end
-
-  @doc ~S"""
-    Returns a list of active comoponent names. These are module names, so you only see one per module. Even if one component is rendered many times, you will only see its name once. If you want to see how many instances of a component are rendered. use components/0.
-  """
-  def component_names do
-    components()
     |> Enum.map(&elem(&1, 0))
   end
+
+  #TODO: make this return a map instead! This sets us up to get paths by liveviews.
+  def paths_and_liveviews(your_app_web) do
+    your_app_web.Router.__routes__()
+    |> Enum.filter(&(&1.metadata |> Map.has_key?(:phoenix_live_view)))
+    |> Enum.map(&{&1.path, &1.metadata_phoenix_live_view |> elem(0)})
+  end
+
+  def web_module do
+    {:ok, lib_dir} =
+      (Path.expand("") <> "/lib")
+      |> File.ls()
+
+    lib_dir
+    |> Enum.filter(&String.ends_with?(&1, "web"))
+    |> hd()
+    |> String.split("_")
+    |> hd()
+  end
+
+  def paths_and_liveviews do
+    module = web_module()
+
+    Module.concat([module, "Router"])
+    |> paths_and_liveviews()
+
+    # then(&(&1.__routes__()))
+  end
+
+  def components_to_assigns do
+    components = (component_states() |> hd).components
+    components
+    |> elem(0)
+    |> Map.values()
+    |> Enum.map(&{elem(&1,0), elem(&1,2)})
+    |> Enum.into(%{})
+  end
+
+  def assigns_for(component) do
+    Map.get(components_to_assigns(), component)
+  end
+
 end
