@@ -4,7 +4,7 @@ defmodule Periscope do
   """
 
   @doc ~S"""
-  liveview_pids returns the PID of every process running a liveview.
+  liveview_pids returns the PID of every process iff that process contains a liveview.
   """
   def liveview_pids do
     Process.list()
@@ -24,6 +24,9 @@ defmodule Periscope do
     |> Enum.map(&elem(&1, 0))
   end
 
+  @doc ~S"""
+  Helper function for extracting state from a list of pids.
+  """
   defp component_states do
     Enum.map(liveview_pids(), &:sys.get_state/1)
   end
@@ -75,19 +78,6 @@ defmodule Periscope do
     |> Enum.map(&elem(&1, 0))
   end
 
-  # @doc ~S"""
-  # This takes the name of a schema and returns all of the fields in the database for the table
-  # that schema deals with, if it has a table. This does NOT return the fields on the schema module.
-  # For that, see schema_fields/1
-  # """
-  # def db_fields(schema_module) do
-  #   schema_name = Module.concat(application_name(), "Schemas." <> schema_module)
-
-  #   Repo.all(schema_name)
-  #   |> hd()
-  #   |> Map.keys()
-  # end
-
   @doc ~S"""
   Takes the last part of a schema module name and returns all the fields in that schema. So running `schema_fields(Comments)` in an app called MyBlog will return all fields for MyBlog.Schemas.Comments. Note that this isn't a string, so you pass in Comments, not "Comments".
   """
@@ -116,17 +106,17 @@ defmodule Periscope do
   @doc ~S"""
   Will return a list of tuples where the first element of each tuple is the router path that accesses a given liveview and the second element is the name of that liveview. Useful if you want to access a component fast without having to scroll through the router and figure out its URL.
   """
-  def paths_and_liveviews do
+  def liveviews_to_paths do
     app = application_name() <> "Web"
 
     Module.concat([app, "Router"])
-    |> paths_and_liveviews()
+    |> liveviews_to_paths()
   end
 
-  def paths_and_liveviews(your_app_web) do
+  def liveviews_to_paths(your_app_web) do
     your_app_web.__routes__()
     |> Enum.filter(&is_a_liveview_route?/1)
-    |> Enum.map(&map_liveview_to_path/1)
+    |> Enum.map(&liveviews_to_paths/1)
     |> Enum.reduce(%{}, &aggregate_merge(&1, &2))
   end
 
@@ -150,20 +140,35 @@ defmodule Periscope do
     Map.get(components_to_assigns(), component)
   end
 
-  defp map_liveview_to_path(route) do
+  @doc ~S"""
+  Takes a route, extracts the liveview module and path to same, and maps the module to a list containing just that path.
+  """
+  def liveviews_to_paths(route) do
     {liveview, path} = {
       route.metadata.phoenix_live_view |> elem(0),
       route.path
     }
 
-    %{liveview => path}
+    %{liveview => [path]}
   end
 
-  defp is_a_liveview_route?(route) do
+  @doc ~S"""
+  Takes a route and returns true if it's a route to a liveview module.
+  """
+  def is_a_liveview_route?(route) do
     Map.has_key?(route.metadata, :phoenix_live_view)
   end
 
-  defp aggregate_merge(a, b) do
-    Map.merge(a, b, fn _k, v1, v2 -> List.flatten([v1] ++ [v2]) end)
+
+  @doc~S"""
+  Merges maps. If a key has different values in each map, they are aggregated into a list.
+
+  ## Examples
+    iex> aggregate_merge(%{a: 1, b: [2, 3], c: [4]}, %{a: [5, 6], b: 7, c: [8, 9, 10, 11]})
+    %{a: [1, 5, 6], b: [2, 3, 7], c: [4, 8, 9, 10, 11]}
+  """
+
+  def aggregate_merge(a, b) do
+    Map.merge(a, b, fn _k, v1, v2 -> List.flatten([v1, v2]) end)
   end
 end
