@@ -75,18 +75,15 @@ defmodule Periscope do
     |> Enum.map(&elem(&1, 0))
   end
 
-  # @doc ~S"""
-  # This takes the name of a schema and returns all of the fields in the database for the table
-  # that schema deals with, if it has a table. This does NOT return the fields on the schema module.
-  # For that, see schema_fields/1
-  # """
-  # def db_fields(schema_module) do
-  #   schema_name = Module.concat(application_name(), "Schemas." <> schema_module)
-
-  #   Repo.all(schema_name)
-  #   |> hd()
-  #   |> Map.keys()
-  # end
+  @doc ~S"""
+    Returns a list of active components. These are component instances, not modules. So if you have e.g. a row component that renders once for each row in a table, expect to see many copies of it here (one for each row).
+  """
+  def components do
+    Enum.flat_map(
+      component_states(),
+      &(&1.components |> elem(1))
+    )
+  end
 
   @doc ~S"""
   Takes the last part of a schema module name and returns all the fields in that schema. So running `schema_fields(Comments)` in an app called MyBlog will return all fields for MyBlog.Schemas.Comments. Note that this isn't a string, so you pass in Comments, not "Comments".
