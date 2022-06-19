@@ -4,8 +4,7 @@ Tools for analyzing running liveview processes.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `periscope` to your list of dependencies in `mix.exs`:
+Periscope can be installed by adding `periscope` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -15,7 +14,7 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/periscope>.
+You may also want to add it to your `iex.exs` by adding `import Periscope`. This ensures that Periscope will be available in your terminal when you run your app locally.
+
+Docs can be found at <https://hexdocs.pm/periscope>.
 
