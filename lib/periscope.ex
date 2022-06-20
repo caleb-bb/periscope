@@ -24,9 +24,7 @@ defmodule Periscope do
     |> Enum.map(&elem(&1, 0))
   end
 
-  @doc ~S"""
-  Helper function for extracting state from a list of pids.
-  """
+  # Helper function for extracting state from a list of pids.
   defp component_states do
     Enum.map(liveview_pids(), &:sys.get_state/1)
   end
@@ -113,11 +111,25 @@ defmodule Periscope do
     |> liveviews_to_paths()
   end
 
+  # This could be a private function?
   def liveviews_to_paths(your_app_web) do
     your_app_web.__routes__()
     |> Enum.filter(&is_a_liveview_route?/1)
-    |> Enum.map(&liveviews_to_paths/1)
+    |> Enum.map(&liveview_route_to_path/1)
     |> Enum.reduce(%{}, &aggregate_merge(&1, &2))
+  end
+
+  @doc ~S"""
+  Takes a route, extracts the liveview module and path to same, and maps the module to a list containing just that path.
+  """
+  # This could be a private function?
+  def liveview_route_to_path(route) do
+    {liveview, path} = {
+      route.metadata.phoenix_live_view |> elem(0),
+      route.path
+    }
+
+    %{liveview => [path]}
   end
 
   @doc ~S"""
@@ -141,26 +153,13 @@ defmodule Periscope do
   end
 
   @doc ~S"""
-  Takes a route, extracts the liveview module and path to same, and maps the module to a list containing just that path.
-  """
-  def liveviews_to_paths(route) do
-    {liveview, path} = {
-      route.metadata.phoenix_live_view |> elem(0),
-      route.path
-    }
-
-    %{liveview => [path]}
-  end
-
-  @doc ~S"""
   Takes a route and returns true if it's a route to a liveview module.
   """
   def is_a_liveview_route?(route) do
     Map.has_key?(route.metadata, :phoenix_live_view)
   end
 
-
-  @doc~S"""
+  @doc ~S"""
   Merges maps. If a key has different values in each map, they are aggregated into a list.
 
   ## Examples
