@@ -111,19 +111,14 @@ defmodule Periscope do
     |> liveviews_to_paths()
   end
 
-  # This could be a private function?
-  def liveviews_to_paths(your_app_web) do
+  defp liveviews_to_paths(your_app_web) do
     your_app_web.__routes__()
     |> Enum.filter(&is_a_liveview_route?/1)
     |> Enum.map(&liveview_route_to_path/1)
     |> Enum.reduce(%{}, &aggregate_merge(&1, &2))
   end
-
-  @doc ~S"""
-  Takes a route, extracts the liveview module and path to same, and maps the module to a list containing just that path.
-  """
-  # This could be a private function?
-  def liveview_route_to_path(route) do
+  
+  defp liveview_route_to_path(route) do
     {liveview, path} = {
       route.metadata.phoenix_live_view |> elem(0),
       route.path
