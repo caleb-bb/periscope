@@ -4,8 +4,9 @@ defmodule Periscope do
   """
 
   @doc ~S"""
-  liveview_pids returns the PID of every process iff that process contains a liveview.
+  liveview_pids returns the PID of every process if that process contains a liveview.
   """
+  @spec liveview_pids :: [pid] | []
   def liveview_pids do
     Process.list()
     |> Enum.map(
@@ -34,6 +35,7 @@ defmodule Periscope do
   @doc ~S"""
   Returns the sockets for all active liveviews in a 0-indexed map. So all_sockets(0) will return the first socket in the map.
   """
+  @spec all_sockets :: map
   def all_sockets do
     component_states()
     |> Enum.map(& &1.socket)
@@ -44,6 +46,7 @@ defmodule Periscope do
   @doc ~S"""
   Returns a list of liveview module names. Expect to see stuff like MyApp.CustomerWorkflow or some such name. This does NOT list the names of components. Use components/0 for that.
   """
+  @spec all_liveviews :: [module] | []
   def all_liveviews do
     Enum.map(component_states(), & &1.socket)
     |> Enum.with_index(fn socket, index -> {index, socket.view} end)
@@ -53,6 +56,7 @@ defmodule Periscope do
   @doc ~S"""
     Returns a single socket. You can access the assigns using socket.assigns. However, socket.assigns will not show the assigns on the components (see component_names).
   """
+  @spec socket(non_neg_integer) :: map
   def socket(socket_index \\ 0) do
     Map.get(all_sockets(), socket_index)
   end
@@ -60,6 +64,7 @@ defmodule Periscope do
   @doc ~S"""
     as socket/1, but for liveview names.
   """
+  @spec which_liveview(non_neg_integer) :: map
   def which_liveview(socket_index \\ 0) do
     socket(socket_index).view
   end
@@ -69,7 +74,7 @@ defmodule Periscope do
 
   Note that components have their own assigns. If you want to see the assigns for a component, you can use assigns_for/1.
   """
-  @spec component_names() :: list
+  @spec component_names :: list
   def component_names do
     Enum.flat_map(
       component_states(),
@@ -81,6 +86,7 @@ defmodule Periscope do
   @doc ~S"""
   Takes the last part of a schema module name and returns all the fields in that schema. So running `schema_fields(Comments)` in an app called MyBlog will return all fields for MyBlog.Schemas.Comments. Note that this isn't a string, so you pass in Comments, not "Comments".
   """
+  @spec schema_fields(binary) :: list
   def schema_fields(schema_module) do
     schema_name = Module.concat(application_name(), "Schemas." <> schema_module)
 
@@ -90,6 +96,7 @@ defmodule Periscope do
   @doc ~S"""
   Returns the name of your top-level application. This is used by other search functions when they need to find/list modules.
   """
+  @spec application_name :: String.t()
   def application_name do
     {:ok, lib_dir} =
       (Path.expand("") <> "/lib")
@@ -106,6 +113,7 @@ defmodule Periscope do
   @doc ~S"""
   Will return a list of tuples where the first element of each tuple is the router path that accesses a given liveview and the second element is the name of that liveview. Useful if you want to access a component fast without having to scroll through the router and figure out its URL.
   """
+  @spec liveviews_to_paths :: list
   def liveviews_to_paths do
     app = application_name() <> "Web"
 
@@ -123,6 +131,7 @@ defmodule Periscope do
   @doc ~S"""
   Returns a map whose keys are component names (as those found in component_names) and whose values are the assigns for those components.
   """
+  @spec components_to_assigns :: map
   def components_to_assigns do
     components = (component_states() |> hd).components
 
@@ -136,6 +145,7 @@ defmodule Periscope do
   @doc ~S"""
   Returns the assigns for the fully-qualified component name, e.g. assigns_for(MyappWeb.MainView.Table) will return the assigns for that component.
   """
+  @spec assigns_for(binary) :: map
   def assigns_for(component) do
     Map.get(components_to_assigns(), component)
   end
@@ -155,12 +165,12 @@ defmodule Periscope do
   @doc ~S"""
   Takes a route and returns true if it's a route to a liveview module.
   """
+  @spec is_a_liveview_route?(atom | map) :: boolean
   def is_a_liveview_route?(route) do
     Map.has_key?(route.metadata, :phoenix_live_view)
   end
 
-
-  @doc~S"""
+  @doc ~S"""
   Merges maps. If a key has different values in each map, they are aggregated into a list.
 
   ## Examples
@@ -168,6 +178,7 @@ defmodule Periscope do
     %{a: [1, 5, 6], b: [2, 3, 7], c: [4, 8, 9, 10, 11]}
   """
 
+  @spec aggregate_merge(map, map) :: map
   def aggregate_merge(a, b) do
     Map.merge(a, b, fn _k, v1, v2 -> List.flatten([v1, v2]) end)
   end
