@@ -24,9 +24,7 @@ defmodule Periscope do
     |> Enum.map(&elem(&1, 0))
   end
 
-  @doc ~S"""
-  Helper function for extracting state from a list of pids.
-  """
+  # Helper function for extracting state from a list of pids.
   defp component_states do
     Enum.map(liveview_pids(), &:sys.get_state/1)
   end
@@ -113,11 +111,20 @@ defmodule Periscope do
     |> liveviews_to_paths()
   end
 
-  def liveviews_to_paths(your_app_web) do
+  defp liveviews_to_paths(your_app_web) do
     your_app_web.__routes__()
     |> Enum.filter(&is_a_liveview_route?/1)
-    |> Enum.map(&liveviews_to_paths/1)
+    |> Enum.map(&liveview_route_to_path/1)
     |> Enum.reduce(%{}, &aggregate_merge(&1, &2))
+  end
+  
+  defp liveview_route_to_path(route) do
+    {liveview, path} = {
+      route.metadata.phoenix_live_view |> elem(0),
+      route.path
+    }
+
+    %{liveview => [path]}
   end
 
   @doc ~S"""
@@ -138,18 +145,6 @@ defmodule Periscope do
   """
   def assigns_for(component) do
     Map.get(components_to_assigns(), component)
-  end
-
-  @doc ~S"""
-  Takes a route, extracts the liveview module and path to same, and maps the module to a list containing just that path.
-  """
-  def liveviews_to_paths(route) do
-    {liveview, path} = {
-      route.metadata.phoenix_live_view |> elem(0),
-      route.path
-    }
-
-    %{liveview => [path]}
   end
 
   @doc ~S"""
