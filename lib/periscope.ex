@@ -102,10 +102,11 @@ defmodule Periscope do
 
     lib_dir
     |> Enum.filter(&String.ends_with?(&1, "web"))
-    |> hd()
+    |> hd
     |> String.split("_")
-    |> hd()
-    |> String.capitalize()
+    |> Enum.drop(-1)
+    |> Enum.map(&String.capitalize(&1))
+    |> Enum.join
   end
 
   @doc ~S"""
@@ -165,16 +166,7 @@ defmodule Periscope do
     Map.has_key?(route.metadata, :phoenix_live_view)
   end
 
-  @doc ~S"""
-  Merges maps. If a key has different values in each map, they are aggregated into a list.
-
-  ## Examples
-    iex> Periscope.aggregate_merge(%{a: 1, b: [2, 3], c: [4]}, %{a: [5, 6], b: 7, c: [8, 9, 10, 11]})
-    %{a: [1, 5, 6], b: [2, 3, 7], c: [4, 8, 9, 10, 11]}
-  """
-
-  @spec aggregate_merge(map, map) :: map
-  def aggregate_merge(a, b) do
+  defp aggregate_merge(a, b) do
     Map.merge(a, b, fn _k, v1, v2 -> List.flatten([v1, v2]) end)
   end
 end
