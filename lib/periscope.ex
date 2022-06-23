@@ -102,10 +102,10 @@ defmodule Periscope do
 
     lib_dir
     |> Enum.filter(&String.ends_with?(&1, "web"))
-    |> hd()
     |> String.split("_")
-    |> hd()
-    |> String.capitalize()
+    |> Enum.drop(-1)
+    |> Enum.map(&String.capitalize(&1))
+    |> Enum.join
   end
 
   @doc ~S"""
