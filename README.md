@@ -9,7 +9,7 @@ Periscope can be installed by adding `periscope` to your list of dependencies in
 ```elixir
 def deps do
   [
-    {:periscope, "~> 0.4.6"}
+    {:periscope, "~> 0.5.6"}
   ]
 end
 ```
