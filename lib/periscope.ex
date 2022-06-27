@@ -82,7 +82,7 @@ defmodule Periscope do
   end
 
   @doc ~S"""
-  Takes the last part of a schema module name and returns all the fields in that schema. So running `schema_fields(Comments)` in an app called MyBlog will return all fields for MyBlog.Schemas.Comments. Note that this isn't a string, so you pass in Comments, not "Comments".
+  Takes the last part of a schema module name and returns all the fields in that schema. So running `schema_fields("Comments")` in an app called MyBlog will return all fields for MyBlog.Schemas.Comments..
   """
   @spec schema_fields(binary) :: list
   def schema_fields(schema_module) do
@@ -92,25 +92,13 @@ defmodule Periscope do
   end
 
   @doc ~S"""
-  Returns the name of your top-level application. This is used by other search functions when they need to find/list modules.
+  Searches through a nested map (such as socket.assigns) and checks if `key` exists at any point in the tree. Useful for finding out if a given key is somewhere in your assigns without scrolling through pages of socket info.
   """
-  @spec application_name :: String.t()
-  def application_name do
-    {:ok, lib_dir} =
-      (Path.expand("") <> "/lib")
-      |> File.ls()
-
-    lib_dir
-    |> Enum.filter(&String.ends_with?(&1, "web"))
-    |> hd
-    |> String.split("_")
-    |> Enum.drop(-1)
-    |> Enum.map(&String.capitalize(&1))
-    |> Enum.join
-  end
+  @spec deep_has_key?(map, atom) :: boolean
+  def deep_has_key?(map, key), do: Enum.member?(all_keys(map), key)
 
   @doc ~S"""
-  Will return a list of tuples where the first element of each tuple is the router path that accesses a given liveview and the second element is the name of that liveview. Useful if you want to access a component fast without having to scroll through the router and figure out its URL.
+  Will return a map that takes liveviews to lists of paths to those views. Useful if you want to access a component fast without having to scroll through the router and figure out its URL.
   """
   @spec liveviews_to_paths :: list
   def liveviews_to_paths do
@@ -166,7 +154,32 @@ defmodule Periscope do
     Map.has_key?(route.metadata, :phoenix_live_view)
   end
 
+  defp all_keys(some_map) do
+    keys = Map.keys(some_map)
+    next_layer = keys
+    |> Enum.filter(fn key -> is_map(Map.get(some_map, key)) end)
+
+    Enum.flat_map(next_layer, &all_keys(Map.get(some_map, &1))) ++ keys
+
+  end
+
   defp aggregate_merge(a, b) do
     Map.merge(a, b, fn _k, v1, v2 -> List.flatten([v1, v2]) end)
   end
+
+  @spec application_name :: String.t()
+  defp application_name do
+    {:ok, lib_dir} =
+      (Path.expand("") <> "/lib")
+      |> File.ls()
+
+    lib_dir
+    |> Enum.filter(&String.ends_with?(&1, "web"))
+    |> hd
+    |> String.split("_")
+    |> Enum.drop(-1)
+    |> Enum.map(&String.capitalize(&1))
+    |> Enum.join
+  end
+
 end
