@@ -9,9 +9,9 @@ Periscope solves this problem. Import it in your `iex.exs` and spin up your app 
 
 Another big waste of time is sticking IO.inspect into random places in a module just to view the socket. Periscope also solves this problem aswell, type `socket()` and hey presto, you can view the socket! The socket function returns a socket struct, so you can treat it as one. That means you can type socket.assign to see your current assigns.
 
-Can’t find the assigns or socket you’re looking for, because the currently loaded page is in a component? No problem. `component_names/0` returns a list of all active components, making it easy to find your module. You can even type `assigns_for(YourAppWeb.SomeLiveView.SomeChildComponent)` and view all of the assigns for SomeChildComponent.
+Can’t find the assigns or socket you’re looking for, because the currently loaded page is in a component? No problem. `component_names/0` returns a list of all active components, making it easy to find your module. You can even type `assigns_for(YourAppWeb.SomeLiveView.SomeChildComponent)` and view all of the assigns for `SomeChildComponent`.
 
-Finding the routes for a component can be a bear as well. mix phx.routes gives you routes and HTTP verbs, but not module names. Finding the routes to a module requires going to the router and scrolling through to piece together the route bit by bit. Periscope solves this problem as well: just type paths_and_liveviews and you’ll get a map where each key is a fully-qualified module name and each value is a list of routes to that module. Easy-peasy.
+Finding the routes for a component can be a bear as well. `mix phx.routes` gives you routes and HTTP verbs, but not module names. Finding the routes to a module requires going to the router and scrolling through to piece together the route bit by bit. Periscope solves this problem as well: just type `paths_and_liveviews` and you’ll get a map where each key is a fully-qualified module name and each value is a list of routes to that module. Easy-peasy.
 
 ## Installation
 
