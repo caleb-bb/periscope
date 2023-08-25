@@ -1,5 +1,8 @@
 # Periscope
 
+## NOTE 
+Version 0.6+ works with Liveview 19. For Liveview 17 and earlier, use version 0.5.6. I'm not sure whether it works with Liveview 18 yet - try both.
+
 Introducing Periscope which is meant to save you time when working with LiveView.
 (feel free to star the repo if you like it!)
 

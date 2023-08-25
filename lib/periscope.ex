@@ -20,7 +20,7 @@ defmodule Periscope do
     )
     |> Enum.filter(fn {_, proc} ->
       proc != nil && proc != {} &&
-        elem(proc, 0) == Phoenix.LiveView.Channel
+        elem(proc, 1) == :mount
     end)
     |> Enum.map(&elem(&1, 0))
   end
@@ -114,7 +114,7 @@ defmodule Periscope do
     |> Enum.map(&liveview_route_to_path/1)
     |> Enum.reduce(%{}, &aggregate_merge(&1, &2))
   end
-  
+
   defp liveview_route_to_path(route) do
     {liveview, path} = {
       route.metadata.phoenix_live_view |> elem(0),
