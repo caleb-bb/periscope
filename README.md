@@ -1,7 +1,9 @@
 # Periscope
 
-## NOTE 
-Version 0.6+ works with Liveview 19. For Liveview 17 and earlier, use version 0.5.6. I'm not sure whether it works with Liveview 18 yet - try both.
+## ABOUT 
+Version 0.6+ works with Liveview 19. For Liveview 17 and earlier, use version 0.5.6. I'm not sure which version works with Liveview 18.
+
+## ABOUT 
 
 Introducing Periscope which is meant to save you time when working with LiveView.
 (feel free to star the repo if you like it!)
@@ -23,7 +25,7 @@ Periscope can be installed by adding `periscope` to your list of dependencies in
 ```elixir
 def deps do
   [
-    {:periscope, "~> 0.5.6"}
+    {:periscope, "~> 0.6.0"}
   ]
 end
 ```
