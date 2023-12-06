@@ -39,7 +39,6 @@ defmodule Periscope.MixProject do
   defp package do
     [
       files: ["lib", "mix.exs", "README.md"],
-      maintainers: ["C. Beers"],
       licenses: ["Apache-2.0"],
       links: %{
         "GitHub" => "https://github.com/caleb-bb/periscope",
