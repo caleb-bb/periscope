@@ -28,7 +28,7 @@ defmodule Periscope do
   @doc ~S"""
   Used for testing handle_info/2 callback.
   """
-  def message(msg, socket_number // 0), do: send(socket(socket_number).assigns.root_pid, msg)
+  def message(msg, socket_number \\ 0), do: send(socket(socket_number).root_pid, msg)
 
   @doc ~S"""
   Returns the sockets for all active liveviews in a 0-indexed map. So all_sockets(0) will return the first socket in the map.
